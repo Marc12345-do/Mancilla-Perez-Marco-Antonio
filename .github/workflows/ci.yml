@@ -43,12 +43,3 @@ jobs:
           DB_CONNECTION: sqlite
           DB_DATABASE: ':memory:'
         run: php artisan test
-```[cite: 20, 21]
-
-### 📸 TAREA DE EVIDENCIA (Captura 2 de 7):
-* **Toma una captura de pantalla** en Visual Studio Code donde se vea la estructura de carpetas lateral y el archivo `ci.yml` abierto[cite: 18, 20, 24].
-* *Esta será la **Evidencia 2** requerida en tu entrega*[cite: 27].
-
----
-
-Avísame cuando hayas creado el archivo y tomado esta captura para avanzar al **Paso 3** y subir los cambios a GitHub para ver la primera ejecución exitosa.
