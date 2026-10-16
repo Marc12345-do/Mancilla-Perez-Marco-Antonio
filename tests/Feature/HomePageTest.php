@@ -1,15 +1,6 @@
-<?php
-
-namespace Tests\Feature;
-
-use Tests\TestCase;
-
-class HomePageTest extends TestCase
+public function test_home_page_is_accessible(): void
 {
-    public function test_home_page_is_accessible(): void
-    {
-        $response = $this->get('/');
+    $response = $this->get('/');
 
-        $response->assertSuccessful();
-    }
+    $response->assertStatus(404); // Forzamos el fallo para la evidencia
 }
