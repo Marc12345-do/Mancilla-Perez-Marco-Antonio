@@ -1,4 +1,4 @@
-name: Laravel CI Pipeline
+name: Laravel CI/CD Pipeline & Release Artifact
 
 on:
   push:
@@ -28,10 +28,10 @@ jobs:
       - name: Validar Composer
         run: composer validate
 
-      - name: Instalar dependencias
+      - name: Instalar dependencias de desarrollo para pruebas
         run: composer install --prefer-dist --no-interaction --no-progress
 
-      - name: Preparar entorno Laravel
+      - name: Preparar entorno Laravel para testing
         run: |
           cp .env.example .env
           php artisan key:generate
@@ -43,3 +43,38 @@ jobs:
           DB_CONNECTION: sqlite
           DB_DATABASE: ':memory:'
         run: php artisan test
+
+  create-release-artifact:
+    needs: laravel-tests
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Obtener codigo fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, bcmath, fileinfo
+
+      - name: Instalar dependencias de produccion (Sin Dev)
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+      - name: Limpiar archivos sensibles e innecesarios
+        run: |
+          rm -f .env
+          rm -rf tests/
+          rm -rf .git/
+          rm -rf .github/
+
+      - name: Comprimir paquete de liberacion (.zip)
+        run: zip -r release-v1.0.0.zip . -x "*.git*" "*.github*"
+
+      - name: Publicar Artefacto de Liberacion
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-v1.0.0-artifact
+          path: release-v1.0.0.zip
+          retention-days: 7
